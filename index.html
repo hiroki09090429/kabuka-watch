@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="高配当株ウォッチ">
+<meta name="theme-color" content="#1c2a1c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>高配当株ウォッチ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f3ef;
+  --surface:#ffffff;
+  --surface2:#f0ede8;
+  --primary:#2d5a3d;
+  --primary-dark:#1c3a28;
+  --text:#1c1a17;
+  --text2:#6b6560;
+  --border:#e0dbd4;
+  --up5:#1a5276;--up3:#2980b9;--up1:#5dade2;--up0:#d6eaf8;
+  --dn0:#fadbd8;--dn1:#ec7063;--dn3:#c0392b;
+  --radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+body{
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  /* Bug fix: iOS safe-area-inset-bottom対応 */
+  padding-bottom:calc(80px + env(safe-area-inset-bottom, 0px));
+}
+/* HEADER */
+.header{
+  background:var(--primary-dark);
+  color:#fff;
+  padding:env(safe-area-inset-top,0px) 0 0;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3)
+}
+.header-inner{padding:14px 16px 0}
+.header h1{font-size:18px;font-weight:700;letter-spacing:.05em}
+.header .subtitle{font-size:11px;opacity:.7;margin-top:2px}
+.tabs{display:flex;gap:0;margin-top:12px}
+.tab{flex:1;padding:10px 8px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;color:rgba(255,255,255,.6);border-bottom:3px solid transparent;transition:.2s}
+.tab.active{color:#fff;border-bottom-color:#7ec8a0}
+/* MAIN */
+.page{display:none;padding:16px}
+.page.active{display:block}
+/* SUMMARY BAR */
+.summary{display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+.summary::-webkit-scrollbar{display:none}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:12px 16px;min-width:110px;box-shadow:var(--shadow);flex-shrink:0}
+.stat-card .label{font-size:10px;color:var(--text2);margin-bottom:4px}
+.stat-card .value{font-size:20px;font-weight:700}
+.stat-card .value.up{color:#2980b9}
+.stat-card .value.dn{color:#c0392b}
+/* SORT BAR */
+.sort-bar{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}
+.sort-bar::-webkit-scrollbar{display:none}
+.sort-btn{padding:6px 14px;border-radius:20px;font-size:12px;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.sort-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* STOCK CARDS - WEEKLY */
+.stock-list{display:flex;flex-direction:column;gap:10px}
+.stock-card{background:var(--surface);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);cursor:pointer;transition:.15s}
+.stock-card:active{transform:scale(.98);opacity:.9}
+.stock-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stock-info{flex:1;min-width:0}
+.stock-code{font-size:11px;color:var(--text2);margin-bottom:2px}
+.stock-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* PRICE ROW */
+.price-row{display:flex;gap:4px}
+.price-cell{flex:1;text-align:center;border-radius:6px;padding:5px 2px}
+.price-cell .date{font-size:9px;color:var(--text2);margin-bottom:2px}
+.price-cell .price{font-size:12px;font-weight:500}
+/* Bug fix: 最初のセルにデフォルト背景色 */
+.price-cell.day-base{background:var(--surface2)}
+/* 米国ETF未確定マーク */
+.us-pending{font-size:9px;color:var(--text2);opacity:.7}
+/* WEEK PCT BADGE */
+.week-pct-badge{font-size:18px;font-weight:700;text-align:right;min-width:80px;border-radius:10px;padding:6px 10px}
+/* LONG TERM CARDS */
+.lt-card{background:var(--surface);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:10px}
+.lt-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.lt-price{font-size:13px;color:var(--text2)}
+/* Bug fix: 7列グリッドに変更（4列だと3行目が3個でアンバランス） */
+.periods{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.periods-row2{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.period-item{text-align:center}
+.period-label{font-size:10px;color:var(--text2);margin-bottom:3px}
+.period-val{font-size:13px;font-weight:700;padding:4px 2px;border-radius:6px}
+/* PCT COLORS */
+.pct-up5{background:var(--up5);color:#fff}
+.pct-up3{background:var(--up3);color:#fff}
+.pct-up1{background:var(--up1);color:#fff}
+.pct-up0{background:var(--up0);color:#1c4a7c}
+.pct-dn0{background:var(--dn0);color:#7c1c1c}
+.pct-dn1{background:var(--dn1);color:#fff}
+.pct-dn3{background:var(--dn3);color:#fff}
+.pct-null{background:var(--surface2);color:var(--text2)}
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:14px}
+.search-wrap input{width:100%;padding:10px 16px 10px 36px;border-radius:22px;border:1.5px solid var(--border);background:var(--surface);font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none}
+.search-wrap input:focus{border-color:var(--primary)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:16px}
+/* UPDATE TIME */
+.update-bar{text-align:center;padding:8px;font-size:11px;color:var(--text2);background:var(--surface2)}
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--text2)}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* REFRESH BUTTON */
+.refresh-btn{
+  position:fixed;
+  bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  right:16px;
+  width:52px;height:52px;
+  border-radius:50%;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  font-size:22px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+.refresh-btn:active{transform:scale(.92)}
+/* Bug fix: 更新中アニメーション */
+.refresh-btn.loading-spin{animation:spin .8s linear infinite}
+/* EMPTY */
+.empty{text-align:center;padding:40px;color:var(--text2);font-size:14px}
+/* US note */
+.us-note{font-size:10px;color:var(--text2);margin-top:4px;opacity:.8}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>📊 高配当株ウォッチ</h1>
+    <div class="subtitle" id="updateTime">読み込み中...</div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('weekly',this)">📅 週次推移</div>
+      <div class="tab" onclick="switchTab('longterm',this)">📈 長期騰落率</div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEKLY PAGE -->
+<div class="page active" id="page-weekly">
+  <div id="weekly-content"><div class="loading"><div class="spinner"></div>データ読み込み中...</div></div>
+</div>
+
+<!-- LONGTERM PAGE -->
+<div class="page" id="page-longterm">
+  <div id="lt-content"><div class="loading"><div class="spinner"></div>データ読み込み中...</div></div>
+</div>
+
+<button class="refresh-btn" id="refreshBtn" onclick="loadData(true)" title="更新">↻</button>
+
+<script>
+let data = null;
+let currentSort = 'week_pct';
+let searchQuery = '';
+let ltSort = 'y1';
+
+function pctClass(v){
+  if(v===null||v===undefined) return 'pct-null';
+  if(v>=5) return 'pct-up5';
+  if(v>=3) return 'pct-up3';
+  if(v>=1) return 'pct-up1';
+  if(v>=0) return 'pct-up0';
+  if(v>=-1) return 'pct-dn0';
+  if(v>=-3) return 'pct-dn1';
+  return 'pct-dn3';
+}
+function fmtPct(v, decimals=2){
+  if(v===null||v===undefined||isNaN(v)) return '—';  // Bug fix: NaNガード
+  return (v>=0?'+':'')+v.toFixed(decimals)+'%';
+}
+function fmtPrice(v, isUs){
+  if(v===null||v===undefined) return '—';
+  return isUs ? v.toFixed(2) : Math.round(v).toLocaleString();
+}
+
+function switchTab(name, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const page = document.getElementById('page-'+name);
+  page.classList.add('active');
+  // Bug fix: タブ切り替え時にスクロール位置をリセット
+  page.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+async function loadData(force=false){
+  const btn = document.getElementById('refreshBtn');
+  // Bug fix: 更新中スピナー表示
+  btn.classList.add('loading-spin');
+  btn.style.pointerEvents = 'none';
+  try{
+    const url = 'data.json?t='+Date.now();
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    data = await res.json();
+    // Bug fix: longterm専用updated_atがあれば週次と分けて表示
+    const weeklyAt = data.weekly_updated_at || data.updated_at || '';
+    document.getElementById('updateTime').textContent = '最終更新: '+weeklyAt;
+    renderWeekly();
+    renderLongterm();
+  }catch(e){
+    document.getElementById('weekly-content').innerHTML =
+      '<div class="empty">⚠️ データ読み込みエラー<br><small>'+e.message+'</small><br><small style="margin-top:8px;display:block">サーバー(192.168.3.191:3334)に接続できません</small></div>';
+  }finally{
+    // Bug fix: 必ずスピナー解除
+    btn.classList.remove('loading-spin');
+    btn.style.pointerEvents = '';
+  }
+}
+
+function renderWeekly(){
+  if(!data) return;
+  let stocks = [...data.weekly.stocks];
+  const dates = data.weekly.dates;
+
+  // Bug fix: 検索を大文字小文字・セクター含め統一
+  if(searchQuery){
+    const q = searchQuery.toLowerCase();
+    stocks = stocks.filter(s=>
+      s.name.toLowerCase().includes(q) ||
+      s.code.toLowerCase().includes(q) ||
+      s.sector.toLowerCase().includes(q)
+    );
+  }
+
+  // sort
+  stocks.sort((a,b)=>{
+    if(currentSort==='week_pct'){
+      const av = a.week_pct??-999, bv = b.week_pct??-999;
+      return bv-av;
+    }
+    if(currentSort==='code') return a.code.localeCompare(b.code);
+    if(currentSort==='sector') return a.sector.localeCompare(b.sector);
+    return 0;
+  });
+
+  const up = stocks.filter(s=>s.week_pct>0).length;
+  const dn = stocks.filter(s=>s.week_pct<0).length;
+  // Bug fix: NaN防止 - week_pctがある銘柄のみで平均
+  const nonNull = stocks.filter(s=>s.week_pct!==null&&s.week_pct!==undefined);
+  const avg = nonNull.length ? nonNull.reduce((s,x)=>s+x.week_pct,0)/nonNull.length : null;
+
+  let html = `
+  <div class="summary">
+    <div class="stat-card"><div class="label">銘柄数</div><div class="value">${stocks.length}</div></div>
+    <div class="stat-card"><div class="label">週間平均</div><div class="value ${avg!==null&&avg>=0?'up':'dn'}">${fmtPct(avg,1)}</div></div>
+    <div class="stat-card"><div class="label">↑上昇</div><div class="value up">${up}</div></div>
+    <div class="stat-card"><div class="label">↓下落</div><div class="value dn">${dn}</div></div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="銘柄名・コード・セクター" value="${searchQuery.replace(/"/g,'&quot;')}"
+      oninput="searchQuery=this.value;renderWeekly()" />
+  </div>
+  <div class="sort-bar">
+    <button class="sort-btn ${currentSort==='week_pct'?'active':''}" onclick="currentSort='week_pct';renderWeekly()">週間騰落率順</button>
+    <button class="sort-btn ${currentSort==='code'?'active':''}" onclick="currentSort='code';renderWeekly()">コード順</button>
+    <button class="sort-btn ${currentSort==='sector'?'active':''}" onclick="currentSort='sector';renderWeekly()">セクター順</button>
+  </div>
+  <div class="stock-list">`;
+
+  if(stocks.length===0){
+    html += '<div class="empty">該当する銘柄がありません</div>';
+  }
+
+  for(const s of stocks){
+    const pctCls = pctClass(s.week_pct);
+    // Bug fix: 最後の日付がnullの場合（US ETF 22時JST未確定）を識別
+    const lastIsNull = s.prices[s.prices.length-1]===null;
+    const isUsEtf = s.is_us;
+
+    const priceRow = dates.map((d,i)=>{
+      const p = s.prices[i];
+      const prevP = i>0?s.prices[i-1]:null;
+      let dayCls = '';
+      if(i===0){
+        // Bug fix: 最初のセルに base クラスで薄いグレー背景
+        dayCls = 'day-base';
+      } else if(p!==null&&prevP!==null){
+        const dp=(p/prevP-1)*100;
+        dayCls=pctClass(dp);
+      }
+      // Bug fix: 米国ETFの最新日null表示に "(米)" マーク
+      let priceDisplay = fmtPrice(p, s.is_us);
+      if(p===null && isUsEtf && i===dates.length-1){
+        priceDisplay = '<span class="us-pending">米市場<br>未確定</span>';
+      }
+      return `<div class="price-cell ${dayCls}">
+        <div class="date">${d}</div>
+        <div class="price">${priceDisplay}</div>
+      </div>`;
+    }).join('');
+
+    html += `<div class="stock-card">
+      <div class="stock-header">
+        <div class="stock-info">
+          <div class="stock-code">${s.code}${s.is_us?'':'.T'} · ${s.sector}</div>
+          <div class="stock-name">${s.name}</div>
+          ${isUsEtf && lastIsNull ? '<div class="us-note">※最終日は米国市場閉場後に更新</div>' : ''}
+        </div>
+        <div class="week-pct-badge ${pctCls}">${fmtPct(s.week_pct,2)}</div>
+      </div>
+      <div class="price-row">${priceRow}</div>
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('weekly-content').innerHTML = html;
+}
+
+function renderLongterm(){
+  if(!data) return;
+  let stocks = [...data.longterm.stocks];
+
+  // Bug fix: 検索を大文字小文字統一
+  if(searchQuery){
+    const q = searchQuery.toLowerCase();
+    stocks = stocks.filter(s=>
+      s.name.toLowerCase().includes(q) ||
+      s.code.toLowerCase().includes(q) ||
+      s.sector.toLowerCase().includes(q)
+    );
+  }
+
+  const periods = ['m1','m3','m6','y1','y3','y5','y10'];
+  const labels  = ['1ヶ月','3ヶ月','6ヶ月','1年','3年','5年','10年'];
+
+  stocks.sort((a,b)=>{
+    const av = a[ltSort]??-999, bv = b[ltSort]??-999;
+    return bv-av;
+  });
+
+  // Bug fix: 長期更新日時が別途ある場合は表示
+  const ltAt = data.longterm_updated_at || '';
+  const ltNote = ltAt ? `<div style="font-size:10px;color:var(--text2);margin-bottom:8px">長期データ更新: ${ltAt}</div>` : '';
+
+  let html = `
+  ${ltNote}
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="銘柄名・コード・セクター" value="${searchQuery.replace(/"/g,'&quot;')}"
+      oninput="searchQuery=this.value;renderLongterm()" />
+  </div>
+  <div class="sort-bar">
+    ${periods.map((p,i)=>`<button class="sort-btn ${ltSort===p?'active':''}" onclick="ltSort='${p}';renderLongterm()">${labels[i]}順</button>`).join('')}
+  </div>`;
+
+  if(stocks.length===0){
+    html += '<div class="empty">該当する銘柄がありません</div>';
+  }
+
+  for(const s of stocks){
+    const priceStr = s.price ? `${fmtPrice(s.price,s.is_us)}${s.is_us?'$':'円'}` : '';
+    // Bug fix: 7項目を4+3に分割してグリッド表示をバランス良く
+    const row1periods = periods.slice(0,4);
+    const row2periods = periods.slice(4);
+    const row1labels = labels.slice(0,4);
+    const row2labels = labels.slice(4);
+
+    const row1cells = row1periods.map((p,i)=>`
+      <div class="period-item">
+        <div class="period-label">${row1labels[i]}</div>
+        <div class="period-val ${pctClass(s[p])}">${fmtPct(s[p],1)}</div>
+      </div>`).join('');
+    const row2cells = row2periods.map((p,i)=>`
+      <div class="period-item">
+        <div class="period-label">${row2labels[i]}</div>
+        <div class="period-val ${pctClass(s[p])}">${fmtPct(s[p],1)}</div>
+      </div>`).join('');
+
+    html += `<div class="lt-card">
+      <div class="lt-header">
+        <div>
+          <div class="stock-code">${s.code}${s.is_us?'':'.T'} · ${s.sector}</div>
+          <div class="stock-name" style="font-size:15px;font-weight:700">${s.name}</div>
+        </div>
+        <div class="lt-price">${priceStr}</div>
+      </div>
+      <div class="periods">${row1cells}</div>
+      <div class="periods-row2">${row2cells}</div>
+    </div>`;
+  }
+
+  document.getElementById('lt-content').innerHTML = html;
+}
+
+// Auto refresh every 5 min
+loadData();
+setInterval(()=>loadData(), 5*60*1000);
+</script>
+</body>
+</html>
