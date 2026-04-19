@@ -219,7 +219,7 @@ async function loadData(force=false){
     renderLongterm();
   }catch(e){
     document.getElementById('weekly-content').innerHTML =
-      '<div class="empty">⚠️ データ読み込みエラー<br><small>'+e.message+'</small><br><small style="margin-top:8px;display:block">サーバー(192.168.3.191:3334)に接続できません</small></div>';
+      '<div class="empty">⚠️ データ読み込みエラー<br><small>'+e.message+'</small><br><small style="margin-top:8px;display:block">時間をおいて再度お試しください</small></div>';
   }finally{
     // Bug fix: 必ずスピナー解除
     btn.classList.remove('loading-spin');
