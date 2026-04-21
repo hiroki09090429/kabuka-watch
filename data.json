@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-04-21 19:52",
-  "weekly_updated_at": "2026-04-21 19:52",
+  "updated_at": "2026-04-22 08:24",
+  "weekly_updated_at": "2026-04-22 08:24",
   "longterm_updated_at": "",
   "weekly": {
     "dates": [
@@ -506,13 +506,13 @@
         "name": "VYM（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 1.33,
+        "week_pct": 0.85,
         "prices": [
           153.05,
           153.83,
           155.11,
           155.08,
-          null
+          154.35
         ]
       },
       {
@@ -520,13 +520,13 @@
         "name": "HDV（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 0.14,
+        "week_pct": -0.5,
         "prices": [
           133.27,
           133.68,
           133.94,
           133.46,
-          null
+          132.6
         ]
       },
       {
@@ -534,13 +534,13 @@
         "name": "SPYD（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 1.75,
+        "week_pct": 1.03,
         "prices": [
           45.74,
           46.12,
           46.4,
           46.54,
-          null
+          46.21
         ]
       }
     ]
