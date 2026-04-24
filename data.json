@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-04-24 19:53",
-  "weekly_updated_at": "2026-04-24 19:53",
+  "updated_at": "2026-04-25 08:28",
+  "weekly_updated_at": "2026-04-25 08:28",
   "longterm_updated_at": "",
   "weekly": {
     "dates": [
@@ -324,13 +324,13 @@
         "name": "クレスコ",
         "sector": "情報・通信",
         "is_us": false,
-        "week_pct": null,
+        "week_pct": -4.03,
         "prices": [
-          null,
-          null,
-          null,
-          null,
-          null
+          1440.0,
+          1432.0,
+          1413.0,
+          1379.0,
+          1382.0
         ]
       },
       {
@@ -506,13 +506,13 @@
         "name": "VYM（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 0.48,
+        "week_pct": -0.08,
         "prices": [
           155.08,
           154.35,
           154.82,
           155.83,
-          null
+          154.95
         ]
       },
       {
@@ -520,13 +520,13 @@
         "name": "HDV（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 1.09,
+        "week_pct": 0.42,
         "prices": [
           133.46,
           132.6,
           132.81,
           134.92,
-          null
+          134.02
         ]
       },
       {
@@ -534,13 +534,13 @@
         "name": "SPYD（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": -0.32,
+        "week_pct": -1.1,
         "prices": [
           46.54,
           46.21,
           45.98,
           46.39,
-          null
+          46.03
         ]
       }
     ]
