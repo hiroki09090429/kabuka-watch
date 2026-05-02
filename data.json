@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-01 19:57",
-  "weekly_updated_at": "2026-05-01 19:57",
+  "updated_at": "2026-05-02 09:09",
+  "weekly_updated_at": "2026-05-02 09:09",
   "longterm_updated_at": "",
   "weekly": {
     "dates": [
@@ -492,13 +492,13 @@
         "name": "NF・J-REIT ETF",
         "sector": "J-REIT",
         "is_us": false,
-        "week_pct": -1.0,
+        "week_pct": -0.73,
         "prices": [
           2058.5,
           2061.0,
           2044.5,
           2043.5,
-          2038.0
+          null
         ]
       },
       {
@@ -506,13 +506,13 @@
         "name": "VYM（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 1.45,
+        "week_pct": 1.01,
         "prices": [
           154.95,
           154.6,
           154.29,
           157.19,
-          null
+          156.51
         ]
       },
       {
@@ -520,13 +520,13 @@
         "name": "HDV（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 2.5,
+        "week_pct": 2.01,
         "prices": [
           26.8,
           26.67,
           26.9,
           27.47,
-          null
+          27.34
         ]
       },
       {
@@ -534,13 +534,13 @@
         "name": "SPYD（米国高配当）",
         "sector": "米国ETF",
         "is_us": true,
-        "week_pct": 2.22,
+        "week_pct": 1.8,
         "prices": [
           46.03,
           46.01,
           46.36,
           47.05,
-          null
+          46.86
         ]
       }
     ]
