@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-02 09:09",
-  "weekly_updated_at": "2026-05-02 09:09",
+  "updated_at": "2026-05-04 21:13",
+  "weekly_updated_at": "2026-05-04 21:13",
   "longterm_updated_at": "",
   "weekly": {
     "dates": [
@@ -492,13 +492,13 @@
         "name": "NF・J-REIT ETF",
         "sector": "J-REIT",
         "is_us": false,
-        "week_pct": -0.73,
+        "week_pct": -1.0,
         "prices": [
           2058.5,
           2061.0,
           2044.5,
           2043.5,
-          null
+          2038.0
         ]
       },
       {
